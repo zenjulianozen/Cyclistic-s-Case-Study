@@ -228,7 +228,7 @@ avg_ride_length.csv | counts data frame
 
 ```{r, include=FALSE }
 counts <- aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
-write.csv(counts, file = "C:\\Users\\T-Gamer\\Documents\\R\\Case Studies\\Cyclistic\\avg_ride_length.csv")
+write.csv(counts, file = "R\\Case Studies\\Cyclistic\\avg_ride_length.csv")
 ```
 
 all_trips_v2 | full data frame
