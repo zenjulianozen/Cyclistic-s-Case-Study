@@ -1,6 +1,7 @@
 # Cyclistic-s-Case-Study
 Google data analyst certificate capstone project
 
+This is my first project (yay! \o/)
 
 * Original data files used in this project can be found here: https://divvy-tripdata.s3.amazonaws.com/index.html
 
