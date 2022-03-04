@@ -1,0 +1,238 @@
+---
+title: "Cyclistic's Case Study"
+author: "Juliano Zen"
+date: "23/02/2022"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+### About the Company:
+"A bike-share program that features more than 5,800 bicycles and 600 docking stations. 
+Cyclistic sets itself apart by also offering reclining bikes, hand tricycles, and cargo bikes, making bike-share more inclusive to people with disabilities and riders who can’t use a standard two-wheeled bike. 
+The majority of riders opt for traditional bikes; about 8% of riders use the assistive options. Cyclistic users are more likely to ride for leisure, but about 30% use them to commute to work each day." - From Coursera's Case Study Project.
+
+
+### Project overview:
+
+* Cyclistic's marketing goal; to convert casual riders to Cyclistic members (annual membership).
+
+* Key task for this analysis - How do annual members and casual riders use Cyclistic bikes
+differently.
+
+
+##### Libraries setup for R project:
+
+Run packages installations if not already installed.
+
+```{R Packages, include=FALSE}
+install.packages("tidyverse", repos = "http://cran.us.r-project.org") #helps wrangle data
+install.packages("lubridate", repos = "http://cran.us.r-project.org") #helps wrangle date attributes
+```
+
+Then load libraries up.
+
+```{R Libraries}
+library(tidyverse)
+library(lubridate)
+library(dplyr)
+```
+
+##### Data collection and transformation:
+
+Data collected from Feb/2021 to Jan/2022. == Data made available by Motivate International Inc. under this [license](https://ride.divvybikes.com/data-license-agreement).
+
+Data sets:
+
+```{R Datasets}
+"m02_2021" <- read_csv("202102-divvy-tripdata.csv")
+"m03_2021" <- read_csv("202103-divvy-tripdata.csv")
+"m04_2021" <- read_csv("202104-divvy-tripdata.csv")
+"m05_2021" <- read_csv("202105-divvy-tripdata.csv")
+"m06_2021" <- read_csv("202106-divvy-tripdata.csv")
+"m07_2021" <- read_csv("202107-divvy-tripdata.csv")
+"m08_2021" <- read_csv("202108-divvy-tripdata.csv")
+"m09_2021" <- read_csv("202109-divvy-tripdata.csv")
+"m10_2021" <- read_csv("202110-divvy-tripdata.csv")
+"m11_2021" <- read_csv("202111-divvy-tripdata.csv")
+"m12_2021" <- read_csv("202112-divvy-tripdata.csv")
+"m01_2022" <- read_csv("202201-divvy-tripdata.csv")
+```
+
+Format checking: Compare column names prior to joining data sets.
+
+```{R Collumn consistency comparison}
+colnames(m01_2022)
+colnames(m02_2021)
+colnames(m03_2021)
+colnames(m04_2021)
+colnames(m05_2021)
+colnames(m06_2021)
+colnames(m07_2021)
+colnames(m08_2021)
+colnames(m09_2021)
+colnames(m10_2021)
+colnames(m11_2021)
+colnames(m12_2021)
+```
+
+Column names, check.
+No renaming needed.
+
+Incongruity checking:
+
+```{R}
+str(m01_2022)
+str(m02_2021)
+str(m03_2021)
+str(m04_2021)
+str(m05_2021)
+str(m06_2021)
+str(m07_2021)
+str(m08_2021)
+str(m09_2021)
+str(m10_2021)
+str(m11_2021)
+str(m12_2021)
+```
+All columns assigned correctly. Check
+No further action required.
+
+Combining checked data frames: !!! **WARNING, chunk crashing R. Run syntax in console.** !!!
+
+```{r Combining data}
+all_trips <- bind_rows(m02_2021, m03_2021, m04_2021, m05_2021, m06_2021, m07_2021, m08_2021, m09_2021, m10_2021, m11_2021, m12_2021, m01_2022)
+```
+
+
+Adding columns: Date, month, day, year, day of week.
+
+```{r, Dates}
+all_trips$date <- as.Date(all_trips$started_at) #The default format is yyyy-mm-dd
+all_trips$month <- format(as.Date(all_trips$date), "%m")
+all_trips$day <- format(as.Date(all_trips$date), "%d")
+all_trips$year <- format(as.Date(all_trips$date), "%Y")
+all_trips$day_of_week <- format(as.Date(all_trips$date), "%A")
+```
+
+Adding ride length calculation:
+
+```{r Ride Length}
+all_trips$ride_length <- difftime(all_trips$ended_at,all_trips$started_at)
+```
+
+Converting ride length from factor to numeric:
+
+```{r}
+is.factor(all_trips$ride_length)
+all_trips$ride_length <- as.numeric(as.character(all_trips$ride_length))
+is.numeric(all_trips$ride_length)
+```
+
+Cleaning bad data, getting rid of values for ride length less than zero: !!! **WARNING, chunk crashing R. Run syntax in console.** !!
+
+```{r}
+all_trips_v2 <- all_trips[!(all_trips$ride_length<0),]
+```
+
+Check for NA's in ride_length:
+
+```{r}
+summary(all_trips_v2$ride_length)
+```
+
+Removing NA's if needed: Wasn't the case, no NA's found. 
+**Code referenced for future uses**
+all_trips_v3 <- all_trips_v2[complete.cases(all_trips_v2),] #Creates a new DF without NA's
+
+
+##### Descriptive analysis 
+
+```{r}
+mean(all_trips_v2$ride_length) #straight average (total ride length / rides)
+median(all_trips_v2$ride_length) #midpoint number in the ascending array of ride lengths
+max(all_trips_v2$ride_length) #longest ride
+min(all_trips_v2$ride_length) #shortest ride
+```
+
+Summary:
+
+```{r}
+summary(all_trips_v2$ride_length)
+```
+
+Casual users x members comparison:
+
+```{r}
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = mean)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = median)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = max)
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual, FUN = min)
+```
+
+Average ride time by each day for members vs casual users:
+
+```{r}
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
+```
+
+Average ride time by each day for members vs causal users (ordered):
+
+```{r}
+all_trips_v2$day_of_week <- ordered(all_trips_v2$day_of_week, levels=c("domingo", "segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "qexta-feira", "sábado"))
+```
+
+```{r}
+aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
+```
+
+
+```{r}
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>%  #creates weekday field using wday()
+  group_by(member_casual, weekday) %>%                  #groups by usertype and weekday
+  summarise(number_of_rides = n()                       #calculates the number of rides and average duration 
+  ,average_duration = mean(ride_length)) %>%            # calculates the average duration
+  arrange(member_casual, weekday)                       # sorts
+```
+
+##### Number of rides per Rider Type:
+
+```{r}
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = number_of_rides, fill = member_casual)) +
+  geom_col(position = "dodge")
+```
+
+#### Average trip duration:
+
+```{r}
+all_trips_v2 %>% 
+  mutate(weekday = wday(started_at, label = TRUE)) %>% 
+  group_by(member_casual, weekday) %>% 
+  summarise(number_of_rides = n()
+            ,average_duration = mean(ride_length)) %>% 
+  arrange(member_casual, weekday)  %>% 
+  ggplot(aes(x = weekday, y = average_duration, fill = member_casual)) +
+  geom_col(position = "dodge")
+```
+
+##### File exported for further analysis: 
+
+avg_ride_length.csv | counts data frame
+
+```{r, include=FALSE }
+counts <- aggregate(all_trips_v2$ride_length ~ all_trips_v2$member_casual + all_trips_v2$day_of_week, FUN = mean)
+write.csv(counts, file = "C:\\Users\\T-Gamer\\Documents\\R\\Case Studies\\Cyclistic\\avg_ride_length.csv")
+```
+
+all_trips_v2 | full data frame
+
+```{r, include=FALSE }
+write.csv(all_trips_v2, file = "C:\\Users\\T-Gamer\\Documents\\R\\Case Studies\\Cyclistic\\all_trips_v2.csv")
+```
