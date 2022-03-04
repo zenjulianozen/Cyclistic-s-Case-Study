@@ -234,5 +234,5 @@ write.csv(counts, file = "C:\\Users\\T-Gamer\\Documents\\R\\Case Studies\\Cyclis
 all_trips_v2 | full data frame
 
 ```{r, include=FALSE }
-write.csv(all_trips_v2, file = "C:\\Users\\T-Gamer\\Documents\\R\\Case Studies\\Cyclistic\\all_trips_v2.csv")
+write.csv(all_trips_v2, file = "R\\Case Studies\\Cyclistic\\all_trips_v2.csv")
 ```
