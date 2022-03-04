@@ -8,7 +8,7 @@ Google data analyst certificate capstone project
 under this [license](https://ride.divvybikes.com/data-license-agreement).
 
 * Replicating the entire process with Rmarkdown requires downloading the specific data files from the link provided in this readme
-  and simply running the created code chunks.
+  and running the created code chunks.
 * Data set files were not uploaded due to size limitations (25Mb)
 
 This is not only a capstone project but an ongoing learning process.
