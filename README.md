@@ -12,9 +12,9 @@ under this [license](https://ride.divvybikes.com/data-license-agreement).
   and running the created code chunks.
 * Data set files were not uploaded due to size limitations (25Mb)
 
-- In this project; data was gathered, cleaned and analysed to find out more about Cyclistic's userbase.
-  A comparison on how causal and subscription members ride Cyclistic's bikes (see Number_of_rides_by_weekday.jpeg)
-  This data should be usefull for future marketing campaigns aimed on converting casual to membership users.
+- Data was gathered, cleaned and analysed to find out more about Cyclistic's userbase.
+- A comparison on causal and subscription members product usage. (see Number_of_rides_by_weekday.jpeg).
+- The final data set created should be usefull for future marketing campaigns aimed on converting casual to membership users.
   
 
 This is not only a capstone project but an ongoing learning process.
